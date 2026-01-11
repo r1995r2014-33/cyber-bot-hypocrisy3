@@ -4,63 +4,50 @@
   <meta charset="UTF-8" />
   <title>Cyber Bot - Hypocrisy</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <style>
-    body{
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f7f7f7;
-    }
- 
-    /* مساحة البوت داخل الصفحة */
-    #cyberbotH {
-      width: 100%;
-      height: 100vh;  /* خليها كاملة مثل صفحة البوت الأول */
-      background: #fff;
-    }
+    body{ margin:0; font-family: Arial, sans-serif; background:#f7f7f7; }
+    #cyberbotH{ width:100%; height:100vh; background:#fff; }
+    #debug{ position:fixed; top:8px; left:8px; background:#fff; border:1px solid #ddd; padding:6px 10px; border-radius:8px; font-size:12px; z-index:9999; }
   </style>
 </head>
 
 <body>
-
-  <!-- هذا هو العنصر اللي البوت ينزرع داخله -->
   <div id="cyberbotH"></div>
+  <div id="debug">loading…</div>
 
-  <!-- قراءة participant_id من رابط الصفحة وتمريره لـ Voiceflow -->
   <script>
     const params = new URLSearchParams(window.location.search);
-    window.participant_id = params.get('participant_id');
+    const pid = params.get('participant_id');
+    window.participant_id = pid ? String(pid) : '';
+    document.getElementById('debug').textContent =
+      'participant_id from URL = ' + (window.participant_id || '(empty)');
   </script>
 
   <script type="text/javascript">
   (function(d, t) {
-      var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
-      v.onload = function() {
-        window.voiceflow.chat.load({
-          verify: { projectID: '694985a0d5d80f230a07ce38' },
-          url: 'https://general-runtime.voiceflow.com',
-          versionID: 'production',
-
-          launch: {
-            context: {
+    var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
+    v.onload = function() {
+      window.voiceflow.chat.load({
+        verify: { projectID: '694985a0d5d80f230a07ce38' },
+        url: 'https://general-runtime.voiceflow.com',
+        versionID: 'production',
+        launch: {
+          event: {
+            type: "launch",
+            payload: {
               participant_id: window.participant_id
             }
-          },
-
-          voice: {
-            url: "https://runtime-api.voiceflow.com"
-          },
-          render: {
-            mode: 'embedded',
-            target: document.getElementById('cyberbotH')
           }
-        });
-      }
-      v.src = "https://cdn.voiceflow.com/widget-next/bundle.mjs";
-      v.type = "text/javascript";
-      s.parentNode.insertBefore(v, s);
+        },
+        voice: { url: "https://runtime-api.voiceflow.com" },
+        render: { mode: 'embedded', target: document.getElementById('cyberbotH') }
+      });
+    }
+    v.src = "https://cdn.voiceflow.com/widget-next/bundle.mjs";
+    v.type = "text/javascript";
+    s.parentNode.insertBefore(v, s);
   })(document, 'script');
   </script>
-
 </body>
 </html>
+
